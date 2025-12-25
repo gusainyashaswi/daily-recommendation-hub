@@ -11,12 +11,29 @@
 
     {% if recommendations %}
         <ul>
-            {% for item in recommendations %}
-                <li>
-                    <strong>{{ item.title }}</strong> — {{ item.genre }}
-                </li>
-            {% endfor %}
-        </ul>
+    {% for item in recommendations %}
+        <li>
+            <strong>{{ item.title }}</strong> — {{ item.genre }}
+
+            <!-- LIKE BUTTON -->
+            <form action="/feedback" method="post" style="display:inline;">
+                <input type="hidden" name="title" value="{{ item.title }}">
+                <input type="hidden" name="content_type" value="{{ content_type }}">
+                <input type="hidden" name="action" value="like">
+                <button type="submit">👍</button>
+            </form>
+
+            <!-- DISLIKE BUTTON -->
+            <form action="/feedback" method="post" style="display:inline;">
+                <input type="hidden" name="title" value="{{ item.title }}">
+                <input type="hidden" name="content_type" value="{{ content_type }}">
+                <input type="hidden" name="action" value="dislike">
+                <button type="submit">👎</button>
+            </form>
+        </li>
+    {% endfor %}
+</ul>
+
     {% else %}
         <p>No recommendations found.</p>
     {% endif %}

@@ -2,43 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Recommendations</title>
+    <title>Your Recommendations</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
-    <h1>Your Recommendations</h1>
+    <div class="container">
+        <h1>Your Recommendations</h1>
 
-    {% if recommendations %}
-        <ul>
-    {% for item in recommendations %}
-        <li>
-            <strong>{{ item.title }}</strong> — {{ item.genre }}
+        {% if recommendations %}
+            <ul class="results">
+                {% for item in recommendations %}
+                    <li>
+                        <strong>{{ item.title }}</strong>
+                        <span>{{ item.genre }}</span>
 
-            <!-- LIKE BUTTON -->
-            <form action="/feedback" method="post" style="display:inline;">
-                <input type="hidden" name="title" value="{{ item.title }}">
-                <input type="hidden" name="content_type" value="{{ content_type }}">
-                <input type="hidden" name="action" value="like">
-                <button type="submit">👍</button>
-            </form>
+                        <div class="actions">
+                            <form action="/feedback" method="post">
+                                <input type="hidden" name="title" value="{{ item.title }}">
+                                <input type="hidden" name="content_type" value="{{ content_type }}">
+                                <input type="hidden" name="action" value="like">
+                                <button class="like" type="submit">👍 Like</button>
+                            </form>
 
-            <!-- DISLIKE BUTTON -->
-            <form action="/feedback" method="post" style="display:inline;">
-                <input type="hidden" name="title" value="{{ item.title }}">
-                <input type="hidden" name="content_type" value="{{ content_type }}">
-                <input type="hidden" name="action" value="dislike">
-                <button type="submit">👎</button>
-            </form>
-        </li>
-    {% endfor %}
-</ul>
+                            <form action="/feedback" method="post">
+                                <input type="hidden" name="title" value="{{ item.title }}">
+                                <input type="hidden" name="content_type" value="{{ content_type }}">
+                                <input type="hidden" name="action" value="dislike">
+                                <button class="dislike" type="submit">👎 Dislike</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No recommendations found.</p>
+        {% endif %}
 
-    {% else %}
-        <p>No recommendations found.</p>
-    {% endif %}
-
-    <a href="/">Try Again</a>
+        <a href="/" class="back">← Try Again</a>
+    </div>
 
 </body>
 </html>

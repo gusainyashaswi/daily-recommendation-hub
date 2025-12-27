@@ -7,33 +7,33 @@
 </head>
 <body>
 
-    <h1>Daily Recommendation Hub</h1>
-    <p>Get recommendations based on your mood</p>
+    <div class="container">
+        <h1>Daily Recommendation Hub</h1>
+        <p>Get personalized movies, songs, and books based on your mood.</p>
 
-    <form action="/recommend" method="post">
-        
-        <label>Choose content type:</label><br>
-        <select name="content_type" required>
-            <option value="movies">Movies</option>
-            <option value="songs">Songs</option>
-            <option value="books">Books</option>
-        </select>
-        <br><br>
+        <form action="/recommend" method="post">
 
-        <label>Select your mood:</label><br>
-        <select name="mood" required>
-            <option value="happy">Happy</option>
-            <option value="sad">Sad</option>
-            <option value="relaxed">Relaxed</option>
-            <option value="focused">Focused</option>
-            <option value="excited">Excited</option>
-            <option value="comfort">Comfort</option>
-        </select>
-        <br><br>
+            <label for="content_type">Content Type</label>
+            <select name="content_type" required>
+                <option value="movies">Movies</option>
+                <option value="songs">Songs</option>
+                <option value="books">Books</option>
+            </select>
 
-        <button type="submit">Recommend</button>
+            <label for="mood">Your Mood</label>
+            <select name="mood" required>
+                <option value="happy">Happy</option>
+                <option value="sad">Sad</option>
+                <option value="relaxed">Relaxed</option>
+                <option value="focused">Focused</option>
+                <option value="excited">Excited</option>
+                <option value="comfort">Comfort</option>
+            </select>
 
-    </form>
+            <button type="submit">Recommend</button>
+
+        </form>
+    </div>
 
 </body>
 </html>

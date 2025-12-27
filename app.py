@@ -1,14 +1,19 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 import csv
-from flask import redirect
 
 app = Flask(__name__)
 
-def score_item(item, liked_titles):
-    score = popularity_score(item['popularity'])
-    if item['title'] in liked_titles:
-        score += 2
-    return score
+# =====================
+# Helper Functions
+# =====================
+
+def load_data(file_path):
+    data = []
+    with open(file_path, newline='', encoding='utf-8') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            data.append(row)
+    return data
 
 
 def load_preferences():
@@ -23,17 +28,30 @@ def load_preferences():
     return preferences
 
 
-def load_data(file_path):
-    data = []
-    with open(file_path, newline='', encoding='utf-8') as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            data.append(row)
-    return data
+def popularity_score(value):
+    scores = {
+        'high': 3,
+        'medium': 2,
+        'low': 1
+    }
+    return scores.get(value, 0)
+
+
+def score_item(item, liked_titles):
+    score = popularity_score(item['popularity'])
+    if item['title'] in liked_titles:
+        score += 2
+    return score
+
+
+# =====================
+# Routes
+# =====================
 
 @app.route('/')
 def home():
     return render_template('index.html')
+
 
 @app.route('/recommend', methods=['POST'])
 def recommend():
@@ -48,10 +66,33 @@ def recommend():
 
     data = load_data(file_map[content_type])
 
-    recommendations = [item for item in data if item['mood'] == mood]
+    preferences = load_preferences()
 
-    # take top 5
-    recommendations = recommendations[:5]
+    # Remove disliked items
+    disliked_titles = {
+        p['title']
+        for p in preferences
+        if p['action'] == 'dislike' and p['content_type'] == content_type
+    }
+
+    filtered = [
+        item for item in data
+        if item['mood'] == mood and item['title'] not in disliked_titles
+    ]
+
+    # Boost liked items
+    liked_titles = {
+        p['title']
+        for p in preferences
+        if p['action'] == 'like' and p['content_type'] == content_type
+    }
+
+    filtered.sort(
+        key=lambda x: score_item(x, liked_titles),
+        reverse=True
+    )
+
+    recommendations = filtered[:5]
 
     return render_template(
         'results.html',
@@ -73,14 +114,9 @@ def feedback():
     return redirect('/')
 
 
-    recommendations = recommendations[:5]
-    return render_template(
-    'results.html',
-    recommendations=recommendations,
-    content_type=content_type
-)
-
-
+# =====================
+# Run App
+# =====================
 
 if __name__ == '__main__':
     app.run(debug=True)
